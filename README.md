@@ -4,5 +4,5 @@
 
 ### Features available :
 
-#### Play Against the AI
-#### Play again or Leave the game !
+####- Play Against the AI
+####- Play again or Leave the game !
