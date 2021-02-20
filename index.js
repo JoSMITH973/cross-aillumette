@@ -37,37 +37,35 @@ function InitModelArena() {
     return console.log(concatLine(arena))
 }
 
-
-function numRandom(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min)) + min;
-}
-
 function randomRange(array) {
     return array[Math.floor(Math.random() * array.length)]
 }
 
-
 async function Player() {
-    if(matchLefts<=1) {
-        console.log('You Loose ! Try Again')
+    if(matchLefts==0) {
+        console.log('You WIN ! I will win the next time !')
         return EndGame()
     }
-    console.log('It\'s your turn !')
-    rl.question('Which line do you want to select ?\n', async(numLine) => {
-        rl.question('How many match do you want to remove ?\n', async(numMatch) => {
+    console.log('Your turn :')
+    rl.question('Line : ', async(numLine) => {
+        if (numLine < 0 || numLine == 0 || numLine > 4 || numLine == undefined || isNaN(numLine)) {
+            let err=['player','line',numLine]
+            errFunc(err)
+        }
+        rl.question('Matches : ', async(numMatch) => {
             if(arena[numLine].match(/\|/gm) == null) {
                 matchsLeftOnLine = 0
             }
             else {
                 matchsLeftOnLine = (arena[numLine].match(/\|/gm)).length
             }
-            if (numMatch > matchsLeftOnLine || numMatch == 0) {
-                let err=['player',numMatch]
+
+            if (numMatch > matchsLeftOnLine || numMatch == 0 || isNaN(numMatch)) {
+                let err=['player','match',numMatch,numLine]
                 errFunc(err)
             }
             else {
+                console.log(`Player removed ${numMatch} match(es) from line ${numLine}`)
                 for(i=0;i<numMatch;i++) {
                     let line = arena[numLine]
                     line = line.replaceAt(line.lastIndexOf('|'),' ')
@@ -75,7 +73,6 @@ async function Player() {
                     matchLefts--
                 }
                 console.log(concatLine(arena))
-                console.log('reste :',matchLefts)
                 return AI()
             }
         })
@@ -83,29 +80,28 @@ async function Player() {
 }
 
 async function AI() {
-    if(matchLefts<=1) {
-        console.log('You WIN ! I will win the next time !')
+    if(matchLefts==0) {
+        console.log('You Loose ! Try Again')
         return EndGame()
     }
 
-    console.log('\nAI\'s turn !')
     numLine = randomRange(rangeLine)
-    console.log('Line : ',numLine)
     numMatch = randomRange(rangeMatch)
-    console.log('Match : ',numMatch)
-
+    
     if(arena[numLine].match(/\|/gm) == null) {
         matchsLeftOnLine = 0
     }
     else {
         matchsLeftOnLine = (arena[numLine].match(/\|/gm)).length
     }
-
+    
     if (numMatch > matchsLeftOnLine) {
         let err=['AI',matchsLeftOnLine,numLine]
         errFunc(err)
     }
     else {
+        console.log('\nAI\'s turn...')
+        console.log(`AI removed ${numMatch} match(es) from line ${numLine}`)
         for(i=0;i<numMatch;i++) {
             let line = arena[numLine]
             line = line.replaceAt(line.lastIndexOf('|'),' ')
@@ -113,18 +109,27 @@ async function AI() {
             matchLefts--
         }
         console.log(concatLine(arena))
-        console.log('reste :',matchLefts)
         return Player()
     }
 }
 
 function errFunc(err) {
     if (err[0]=='player') {
-        if(err[1]>0) {
-            console.log('Error: not enough matches on this line')
+        if(err[1]=='line') {
+            if(err[2]==undefined || err[2]>4) {
+                console.log('Error: This line is out of range !')
+            }
+            if(err[2]<0 || err[2]==0 || isNaN(err[2])) {
+                console.log('Error: You have to pick a positive number !')
+            }
         }
-        if(err[1]==0 || err[1]==undefined) {
-            console.log('Error: You have to pick a number else than 0 or nothing !')
+        if(err[1]=='match') {
+            if(err[2]>0) {
+                console.log('Error: not enough matches on this line')
+            }
+            if(err[2]==0 || err[2]==undefined || err[2]<0 || isNaN(err[2])) {
+                console.log('Error: You have to pick a positive number !')
+            }
         }
         return Player()
     }
@@ -139,11 +144,12 @@ function errFunc(err) {
 
 function EndGame() {
     rl.question('Do you want to play again ?(y,n)',anwser => {
-        if(anwser=='y') {
+        answer = answer.toLowerCase()
+        if(anwser=='y' || answer=='yes') {
             console.log('Good to see you again ! Let\s play')
             return Main()
         }
-        if(anwser=='n') {
+        if(anwser=='n' || answer =='no') {
             process.exit()
         }
         else {
