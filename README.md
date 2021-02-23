@@ -3,5 +3,5 @@
 ## V1 App
 
 ## Features available :
-### - Play Against the AI
-### - Play again or Leave the game !
+### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Play Against the AI
+### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Play again or Leave the game !
