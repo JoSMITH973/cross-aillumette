@@ -167,7 +167,7 @@ Player (numLine,numMatch) {
         this.errFunc(err)
     }
     else {
-        console.log(`Player removed ${numMatch} match(es) from line ${numLine}`)
+        // console.log(`Player removed ${numMatch} match(es) from line ${numLine}`)
         for(let i=0;i<numMatch;i++) {
             let line = arena[numLine]
             line = this.replaceAt(line.lastIndexOf('|'),' ',line)
@@ -175,7 +175,7 @@ Player (numLine,numMatch) {
             this.state.matchLefts--
         }
         this.setState({player:['player',numLine,numMatch]})
-        console.log('matchsleft : ',this.state.matchLefts)
+        // console.log('matchsleft : ',this.state.matchLefts)
 
         if(this.state.matchLefts==0) {
             this.setState({result:'ia'})
@@ -193,8 +193,7 @@ randomRange(array) {
 
 AI() {
     if(this.state.matchLefts==0) {
-        console.log('You Loose ! Try Again')
-        this.EndGame()
+        // console.log('You Loose ! Try Again')
     }
 
     let numLine = this.randomRange(rangeLine)
@@ -213,8 +212,8 @@ AI() {
         this.errFunc(err)
     }
     else {
-        console.log('\nAI\'s turn...')
-        console.log(`AI removed ${numMatch} match(es) from line ${numLine}`)
+        // console.log('\nAI\'s turn...')
+        // console.log(`AI removed ${numMatch} match(es) from line ${numLine}`)
         for(let i=0;i<numMatch;i++) {
             let line = this.state.arena[numLine]
             line = this.replaceAt(line.lastIndexOf('|'),' ',line)
@@ -222,7 +221,7 @@ AI() {
             this.state.matchLefts--
         }
         this.setState({ia:['IA',numLine,numMatch]})
-        console.log('matchsleft : ',this.state.matchLefts)
+        // console.log('matchsleft : ',this.state.matchLefts)
         if(this.state.matchLefts == 0) {
             this.setState({result:'player'})
         }

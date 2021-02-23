@@ -1,5 +1,6 @@
 body {
     text-align: center;
+    background-color: #838382;
 }
 
 #Main {
@@ -8,7 +9,7 @@ body {
 
 #Arena {
     text-align: left;
-    color: red;
+    color: white;
     border-collapse: collapse;
     font-weight: bolder;
     font-size: 30px;
@@ -22,3 +23,4 @@ body {
 #WhoPlayed {
     white-space: pre-line
 }
+
