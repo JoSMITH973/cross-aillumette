@@ -26,7 +26,8 @@ class App extends React.Component {
             rangeMatch: [1,2,3,4,5,6],
             player:'',
             ia:'',
-            sentence:''
+            sentence:[],
+            result:''
         }
     }
     
@@ -52,13 +53,14 @@ class App extends React.Component {
                 </div>
                 {this.updateArena()}
                 <form onSubmit={this.handleSubmit}>
-                    Line : <input value={this.state.stateLine} onChange={event => this.setState({stateLine:event.target.value})}></input>
+                    Line : <input type="number" value={this.state.stateLine} onChange={event => this.setState({stateLine:event.target.value})}></input>
                     <br/>
-                    Match : <input value={this.state.stateMatch} onChange={event => this.setState({stateMatch:event.target.value})}></input>
+                    Match : <input type="number" value={this.state.stateMatch} onChange={event => this.setState({stateMatch:event.target.value})}></input>
                     <br/>
                     <button type="submit" onClick={this.handleSubmit}> Confirmer </button>
                 </form>
                 <button onClick={this.ResetParty}> Recommencer </button>
+                {/* <h1> {this.state.result} </h1> */}
             </div>
         )
     }
@@ -67,28 +69,25 @@ class App extends React.Component {
 whoPlayed() {
     // this.state.sentence = 'No sentence'
     if(this.state.player[0] !== undefined ) {
-        this.state.sentence = `${this.state.player[0]} removed ${this.state.player[1]} match(es) from ${this.state.player[2]}`
+        this.state.sentence[0] = `${this.state.player[0]} removed ${this.state.player[2]} match(es) from ${this.state.player[1]}`
+    }
+    if (this.state.ia[0] !== undefined ) {
+        this.state.sentence[1] = ` ${this.state.ia[0]} removed ${this.state.ia[2]} match(es) from ${this.state.ia[1]}`
     }
     else {
         // this.setState({sentence:''})
-        this.state.sentence = ''
+        this.state.sentence = []
     }
     return (
-        <p>
-            {this.state.sentence}
-        </p>
+        <div>
+            <p>
+                {this.state.sentence[0]}
+            </p>
+            <p>
+                {this.state.sentence[1]}
+            </p>
+        </div>
         )
-}
-
-concatLine(tab) {
-    let string = ""
-    for(let i = 0; i < tab.length; i++){
-        string = string + tab[i]
-        if(i != tab.length - 1){
-            string = string + "\n"
-        }
-    }
-    return string
 }
 
 InitModelArena() {
@@ -101,11 +100,32 @@ InitModelArena() {
     this.state.arena[4] = "*|||||||*"
     this.state.player = ''
     this.state.ia = ''
+    this.state.sentence=''
+    this.state.result=''
     this.setState({countAiError:0})
 }
 
 updateArena() {
-    return (
+    if(this.state.result=='player') {
+        return (
+            <div>
+                <h1>
+                    You Win !
+                </h1>
+            </div>
+        )
+    }
+    else if(this.state.result=='ia') {
+        return (
+            <div>
+                <h1>
+                    I win ! You loose ! Haha !
+                </h1>
+            </div>
+        )
+    }
+    else {
+        return (
         <div id="Arena">
             {this.state.arena.map((lineByLine) => (
                 <p id="Line">
@@ -113,27 +133,23 @@ updateArena() {
                 </p>
             ))}
         </div>
-    )
+        )
+    }
 }
 
-// String.prototype.replaceAt = function(index, replacement) {
 replaceAt(index, replacement,sentence) {
     sentence = sentence.substr(0, index) + replacement + sentence.substr(index + replacement.length);
     return sentence
 }
 
 
-// async function Player(numLine,numMatch) {
 Player (numLine,numMatch) {
     numLine = this.userLine
     numMatch = this.userMatch
     arena = this.state.arena
-    console.log('arena test : ',arena[numLine])
-    if(matchLefts==0) {
-        console.log('You WIN ! I will win the next time !')
-        this.EndGame()
-    }
-    console.log('Your turn :')
+    // console.log('arena test : ',arena[numLine])
+    
+    // console.log('Your turn :')
     if (numLine < 0 || numLine == 0 || numLine > 4 || numLine == undefined || isNaN(numLine)) {
         let err=['player','line',numLine]
         this.errFunc(err)
@@ -158,12 +174,16 @@ Player (numLine,numMatch) {
             this.state.arena[numLine] = line
             this.state.matchLefts--
         }
-        // console.log(concatLine(arena))
-        // return App()
         this.setState({player:['player',numLine,numMatch]})
-        this.whoPlayed()
-        // this.updateArena()
-        return this.AI()
+        console.log('matchsleft : ',this.state.matchLefts)
+
+        if(this.state.matchLefts==0) {
+            this.setState({result:'ia'})
+        }
+        else {
+            return this.AI()
+        }
+        this.updateArena()
     }
 }
 
@@ -172,7 +192,7 @@ randomRange(array) {
 }
 
 AI() {
-    if(matchLefts==0) {
+    if(this.state.matchLefts==0) {
         console.log('You Loose ! Try Again')
         this.EndGame()
     }
@@ -199,10 +219,13 @@ AI() {
             let line = this.state.arena[numLine]
             line = this.replaceAt(line.lastIndexOf('|'),' ',line)
             arena[numLine] = line
-            matchLefts--
+            this.state.matchLefts--
         }
-        this.setState({player:['IA',numLine,numMatch]})
-        this.whoPlayed()
+        this.setState({ia:['IA',numLine,numMatch]})
+        console.log('matchsleft : ',this.state.matchLefts)
+        if(this.state.matchLefts == 0) {
+            this.setState({result:'player'})
+        }
         this.updateArena()
     }
 }
@@ -230,7 +253,7 @@ errFunc(err) {
     if(err[0]=='AI') {
         countAiError++
         if(err[1]==0) {
-            this.state.rangeLine.splice(rangeLine.indexOf(err[2]),1)
+            this.state.rangeLine.splice(this.state.rangeLine.indexOf(err[2]),1)
         }
         this.AI()
     }

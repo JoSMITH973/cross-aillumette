@@ -1,3 +1,7 @@
+body {
+    text-align: center;
+}
+
 #Main {
     margin: 10px 50px;
 }
@@ -11,5 +15,10 @@
 }
 
 #Line {
+    text-align: center;
     margin:0 0 0 0;
+}
+
+#WhoPlayed {
+    white-space: pre-line
 }
