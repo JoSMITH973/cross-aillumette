@@ -143,13 +143,13 @@ function errFunc(err) {
 }
 
 function EndGame() {
-    rl.question('Do you want to play again ?(y,n)',anwser => {
+    rl.question('Do you want to play again ?(y,n)',answer => {
         answer = answer.toLowerCase()
-        if(anwser=='y' || answer=='yes') {
+        if(answer=='y' || answer=='yes') {
             console.log('Good to see you again ! Let\s play')
             return Main()
         }
-        if(anwser=='n' || answer =='no') {
+        if(answer=='n' || answer =='no') {
             process.exit()
         }
         else {

@@ -1,12 +1,15 @@
+#Main {
+    margin: 10px 50px;
+}
+
 #Arena {
     text-align: left;
     color: red;
     border-collapse: collapse;
     font-weight: bolder;
     font-size: 30px;
-    margin: 10px 50px;
 }
 
-#LineBreak, #Line1, #Line2, #Line3, #Line4 {
+#Line {
     margin:0 0 0 0;
 }
